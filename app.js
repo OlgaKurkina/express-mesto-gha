@@ -5,13 +5,7 @@ const { PORT = 3000 } = process.env;
 const app = express();
 const router = require('./routes/router');
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
-  .then(() => {
-    console.log('база монго');
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 app.use(express.json());
 

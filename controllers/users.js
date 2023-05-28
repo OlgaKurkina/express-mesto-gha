@@ -5,11 +5,9 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => {
-      console.log(user);
       res.send(user);
     })
     .catch((err) => {
-      console.log(err);
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
         return;
@@ -20,9 +18,6 @@ module.exports.createUser = (req, res) => {
 
 module.exports.getCurrentUser = (req, res) => {
   User.findById(req.params.userId)
-   // .orFail(() => {
-   //   throw new Error('NotFound');
-  //  })
     .then((user) => {
       if (!user) {
         return res.status(404).send({ message: 'Пользователь не найден' });
@@ -30,9 +25,8 @@ module.exports.getCurrentUser = (req, res) => {
       return res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
-        return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
@@ -41,7 +35,7 @@ module.exports.getCurrentUser = (req, res) => {
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+    .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 
 module.exports.updateUserData = (req, res) => {
@@ -51,9 +45,6 @@ module.exports.updateUserData = (req, res) => {
     { name, about },
     { new: true, runValidators: true },
   )
-   // .orFail(() => {
-  //    throw new Error('NotFound');
-   // })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'NotFound') {
@@ -75,9 +66,6 @@ module.exports.updateUserAvatar = (req, res) => {
     { avatar },
     { new: true, runValidators: true },
   )
-  //  .orFail(() => {
-   //   throw new Error('NotFound');
-   // })
     .then((user) => {
       if (!user) {
         return res.status(404).send({ message: 'Пользователь не найден' });
