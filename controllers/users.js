@@ -6,11 +6,7 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => {
       console.log(user);
-      res.send({
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-      });
+      res.send(user);
     })
     .catch((err) => {
       console.log(err);
@@ -57,7 +53,7 @@ module.exports.updateUserData = (req, res) => {
     .orFail(() => {
       throw new Error('NotFound');
     })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'NotFound') {
         res.status(404).send({ message: 'Пользователь не найден' });
