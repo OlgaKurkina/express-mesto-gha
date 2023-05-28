@@ -10,8 +10,7 @@ module.exports.createCard = (req, res) => {
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
         return;
-      }
-      res.status(500).send({ message: 'На сервере произошла ошибка' });
+      } res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -23,16 +22,17 @@ module.exports.getCards = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
-    .then((card) => res.send(card))
-    .catch((err) => {
-      if (err.message === 'NotFound') {
-        res.status(404).send({ message: 'Карточка не найдена' });
-        return;
+  // .orFail(() => {
+  //   throw new Error('NotFound');
+  //  })
+    .then((card) => {
+      if (!card) {
+        return res.status(404).send({ message: 'Карточка не найдена' });
       }
-      if (err.message === 'CastError') {
+      return res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
         return;
       }
@@ -46,16 +46,17 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .populate('owner')
-  .orFail(() => {
-    throw new Error('NotFound');
-  })
-  .then((card) => res.send(card))
-  .catch((err) => {
-    if (err.message === 'NotFound') {
-      res.status(404).send({ message: 'Карточка не найдена' });
-      return;
+// .orFail(() => {
+//   throw new Error('NotFound');
+// })
+  .then((card) => {
+    if (!card) {
+      return res.status(404).send({ message: 'Карточка не найдена' });
     }
-    if (err.message === 'CastError') {
+    return res.send(card);
+  })
+  .catch((err) => {
+    if (err.name === 'ValidationError') {
       res.status(400).send({ message: 'Переданы некорректные данные' });
       return;
     }
@@ -68,16 +69,17 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .populate('owner')
-  .orFail(() => {
-    throw new Error('NotFound');
-  })
-  .then((card) => res.send(card))
-  .catch((err) => {
-    if (err.message === 'NotFound') {
-      res.status(404).send({ message: 'Карточка не найдена' });
-      return;
+// .orFail(() => {
+//   throw new Error('NotFound');
+// })
+  .then((card) => {
+    if (!card) {
+      return res.status(404).send({ message: 'Карточка не найдена' });
     }
-    if (err.message === 'CastError') {
+    return res.send(card);
+  })
+  .catch((err) => {
+    if (err.name === 'ValidationError') {
       res.status(400).send({ message: 'Переданы некорректные данные' });
       return;
     }

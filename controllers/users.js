@@ -20,19 +20,20 @@ module.exports.createUser = (req, res) => {
 
 module.exports.getCurrentUser = (req, res) => {
   User.findById(req.params.userId)
-    .orFail(() => {
-      throw new Error('NotFound');
+   // .orFail(() => {
+   //   throw new Error('NotFound');
+  //  })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: 'Пользователь не найден' });
+      }
+      return res.send({ data: user });
     })
-    .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'NotFound') {
-        res.status(404).send({ message: 'Пользователь не найден' });
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные' });
         return;
       }
-      //  if (err.name === 'ValidationError') {
-      //    res.status(400).send({ message: 'Переданы некорректные данные' });
-      //    return;
-      //  }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
@@ -50,9 +51,9 @@ module.exports.updateUserData = (req, res) => {
     { name, about },
     { new: true, runValidators: true },
   )
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
+   // .orFail(() => {
+  //    throw new Error('NotFound');
+   // })
     .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'NotFound') {
@@ -74,21 +75,16 @@ module.exports.updateUserAvatar = (req, res) => {
     { avatar },
     { new: true, runValidators: true },
   )
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
-    .then((userAvatar) => {
-      if (!userAvatar) {
-        res.status(400).send({ message: 'Переданы некорректные данные' });
-        return;
+  //  .orFail(() => {
+   //   throw new Error('NotFound');
+   // })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({ message: 'Пользователь не найден' });
       }
-      res.send({ data: avatar });
+      return res.send(user);
     })
     .catch((err) => {
-      if (err.name === 'NotFound') {
-        res.status(404).send({ message: 'Пользователь не найден' });
-        return;
-      }
       if (err.name === 'ValidationError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
         return;
