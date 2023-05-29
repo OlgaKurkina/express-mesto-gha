@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -19,5 +20,7 @@ app.use((req, res, next) => {
 app.use(router);
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/cards'));
+
+app.use(helmet());
 
 app.listen(PORT);

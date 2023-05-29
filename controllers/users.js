@@ -5,7 +5,7 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => {
-      res.send(user);
+      res.status(201).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -27,6 +27,7 @@ module.exports.getCurrentUser = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(400).send({ message: 'Переданы некорректные данные' });
+        return;
       }
       res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
