@@ -16,11 +16,12 @@ app.use(express.json());
 
 app.use(router);
 
-app.use('/', require('./routes/users'));
-app.use('/', require('./routes/cards'));
+app.use('/', auth, require('./routes/users'));
+app.use('/', auth, require('./routes/cards'));
 
-app.use(errorCheck);
 app.use(errors());
+app.use(errorCheck);
+
 app.use(helmet());
 
 app.listen(PORT);

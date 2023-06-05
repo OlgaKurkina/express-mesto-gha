@@ -11,13 +11,13 @@ const {
   registerValidation,
   loginValidation,
 } = require('../middlewares/validation');
-const { NotFound } = require('../utils/errors/errors');
+const { NotFoundError } = require('../utils/errors/errors');
 
 router.post('/signup', registerValidation, createNewUser);
 router.post('/signin', loginValidation, loginUser);
 
 router.use('/users', auth, userRouter);
 router.use('/cards', auth, cardRouter);
-router.use('/*', (req, res, next) => next(new NotFound('Страница не найдена')));
+router.use('/*', (req, res, next) => next(new NotFoundError('Страница не найдена')));
 
 module.exports = router;

@@ -1,10 +1,8 @@
 const Card = require('../models/card');
 const {
-  UnAuthorized,
   NotFoundError,
   BadRequest,
   Forbidden,
-  Conflict,
 } = require('../utils/errors/errors');
 
 module.exports.createCard = (req, res, next) => {
