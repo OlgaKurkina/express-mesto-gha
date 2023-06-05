@@ -1,7 +1,7 @@
 const Card = require('../models/card');
 const {
   UnAuthorized,
-  NotFound,
+  NotFoundError,
   BadRequest,
   Forbidden,
   Conflict,
@@ -28,9 +28,6 @@ module.exports.getCards = (req, res, next) => {
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
-      if (!card) {
-        return next(new NotFound('Карточка не найдена'));
-      }
       if (card.owner.toString() !== req.user._id) {
         return next(new Forbidden('Нет прав на удаление карточки'));
       }
@@ -53,7 +50,7 @@ module.exports.likeCard = (req, res, next) => Card.findByIdAndUpdate(
   .populate('owner')
   .then((card) => {
     if (!card) {
-      return next(new NotFound('Карточка не найдена'));
+      return next(new NotFoundError('Карточка не найдена'));
     }
     return res.send(card);
   })
@@ -72,7 +69,7 @@ module.exports.dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
   .populate('owner')
   .then((card) => {
     if (!card) {
-      return next(new NotFound('Карточка не найдена'));
+      return next(new NotFoundError('Карточка не найдена'));
     }
     return res.send(card);
   })

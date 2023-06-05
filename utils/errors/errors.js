@@ -1,12 +1,12 @@
 const UnAuthorized = require('./UnAuthorized');
-const NotFound = require('./NotFound');
+const NotFoundError = require('./NotFound');
 const BadRequest = require('./BadRequest');
 const Forbidden = require('./Forbidden');
 const Conflict = require('./Conflict');
 
 module.exports = {
   UnAuthorized,
-  NotFound,
+  NotFoundError,
   BadRequest,
   Forbidden,
   Conflict,

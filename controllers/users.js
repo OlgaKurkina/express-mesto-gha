@@ -5,7 +5,7 @@ const { SECRET_KEY } = require('../utils/config');
 
 const {
   UnAuthorized,
-  NotFound,
+  NotFoundError,
   BadRequest,
   Forbidden,
   Conflict,
@@ -41,19 +41,21 @@ module.exports.createNewUser = (req, res, next) => {
       if (err.code === MONGO_DUPLICATE_KEY_ERROR) {
         return next(new Conflict('Пользователь уже существует'));
       }
-      return next(err);
+      return next();
     });
 };
 
 module.exports.loginUser = (req, res, next) => {
   const { email, password } = req.body;
-  User.findUserByCredentials(email, password).select('+password')
+  return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) {
-        return next(new UnAuthorized('Неверный логин или пароль'));
+      if (!user || !password) {
+        return next(new UnAuthorized('Неправильные почта или пароль'));
       }
       const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: '7d' });
-      res.send({ _id: token });
+      res.send({
+        _id: token,
+      });
     })
     .catch(next);
 };
@@ -61,7 +63,7 @@ module.exports.loginUser = (req, res, next) => {
 module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(() => {
-      throw new NotFound('Пользователь по указанному _id не найден');
+      throw new NotFoundError('Пользователь по указанному _id не найден');
     })
     .then((user) => res.send({ data: user }))
     .catch(next);
@@ -70,7 +72,7 @@ module.exports.getCurrentUser = (req, res, next) => {
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
-      throw new NotFound('Пользователь по указанному _id не найден');
+      throw new NotFoundError('Пользователь по указанному _id не найден');
     })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
@@ -95,7 +97,7 @@ module.exports.updateUserData = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .orFail(() => {
-      throw new NotFound('Пользователь по указанному _id не найден');
+      throw new NotFoundError('Пользователь по указанному _id не найден');
     })
     .then((user) => res.send(user))
     .catch((err) => {
@@ -114,7 +116,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
     { new: true, runValidators: true },
   )
     .orFail(() => {
-      throw new NotFound('Пользователь по указанному _id не найден');
+      throw new NotFoundError('Пользователь по указанному _id не найден');
     })
     .then((user) => {
       res.send(user);

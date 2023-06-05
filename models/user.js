@@ -49,12 +49,12 @@ userSchema.statics.findUserByCredentials = function (email, password) {
     .select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new UnAuthorized('Неправильные почта или пароль'));
+        throw new UnAuthorized('Неправильные почта или пароль');
       }
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new UnAuthorized('Неправильные почта или пароль'));
+            throw new UnAuthorized('Неправильные почта или пароль');
           }
           return user;
         });

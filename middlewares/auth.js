@@ -12,9 +12,9 @@ module.exports = (req, res, next) => {
   let payload;
   try {
     payload = jwt.verify(token, SECRET_KEY);
-    req.user = payload;
   } catch (err) {
-    throw next(new UnAuthorized('Необходима авторизация'));
+    return next(new UnAuthorized('Необходима авторизация'));
   }
+  req.user = payload;
   next();
 };
