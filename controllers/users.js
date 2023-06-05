@@ -4,7 +4,6 @@ const User = require('../models/user');
 const { SECRET_KEY } = require('../utils/config');
 
 const {
-  UnAuthorized,
   NotFoundError,
   BadRequest,
   Conflict,
@@ -48,9 +47,6 @@ module.exports.loginUser = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user || !password) {
-        return next(new UnAuthorized('Неправильные почта или пароль'));
-      }
       const token = jwt.sign({ _id: user._id }, SECRET_KEY, { expiresIn: '7d' });
       res.send({
         _id: token,
